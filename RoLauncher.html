@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Roblox Pro Dashboard (Max Edition)</title>
+    <!-- Load Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for deep Roblox theme and aesthetics */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        
+        :root {
+            --roblox-blue: #00A2FF;
+            --dark-bg: #0d0d0d;
+            --card-bg: #1a1a1a;
+            --secondary-text: #b0b0b0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: var(--roblox-blue); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+
+        /* General Button Styling */
+        .btn-roblox {
+            background-color: var(--roblox-blue);
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 162, 255, 0.4);
+        }
+        .btn-roblox:hover {
+            background-color: #007ccf;
+            box-shadow: 0 6px 15px rgba(0, 162, 255, 0.6);
+            transform: translateY(-1px);
+        }
+        
+        /* Navigation Button (Active State) */
+        .nav-btn.active {
+            background-color: var(--roblox-blue);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 162, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* Genre Button (Active State) */
+        .filter-btn.active {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        /* Game Card Hover Effect */
+        .game-card:hover {
+            border-color: var(--roblox-blue);
+            box-shadow: 0 0 20px rgba(0, 162, 255, 0.2);
+        }
+        
+        /* Loading Spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
+        }
+
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="bg-card-bg lg:w-64 w-full lg:min-h-screen p-4 lg:p-6 shadow-2xl lg:shadow-xl sticky top-0 z-20 border-b lg:border-r border-gray-700">
+        <div id="logo-trigger" class="text-3xl font-black text-roblox-blue mb-10 text-center lg:text-left tracking-wider cursor-pointer transition transform hover:scale-[1.05]">
+            ROBLOX PRO MAX
+        </div>
+        <div id="daily-task-box" class="bg-gray-800 p-3 rounded-xl mb-6 border-l-4 border-emerald-500 hidden">
+            <p class="text-sm font-bold text-emerald-400">✅ Daily Fun Task:</p>
+            <p id="daily-task-text" class="text-xs text-white mt-1"></p>
+        </div>
+
+        <ul class="flex lg:flex-col space-x-4 lg:space-x-0 lg:space-y-3 overflow-x-auto pb-2">
+            <li><button data-section="launcher" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50 active">🎮 Game Launcher</button></li>
+            <li><button data-section="codes" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">🎁 Promo Codes Hub</button></li>
+            <li><button data-section="quiz" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">🧠 Quiz Zone</button></li>
+            <li><button data-section="learn" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">💡 Learn & Master</button></li>
+            <li><button data-section="marketplace" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">💰 Marketplace (100+)</button></li>
+            <li><button data-section="finder" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">🔎 Player Finder</button></li>
+            <li><button data-section="extensions" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">🔗 Pro Extensions</button></li>
+            <li><button data-section="support" class="nav-btn w-full text-left p-3 rounded-xl font-semibold transition duration-150 hover:bg-gray-700/50">🤝 Dev Support</button></li>
+        </ul>
+        
+        <div id="easter-egg-reveal" class="mt-8 p-3 bg-fuchsia-900/40 border-l-4 border-fuchsia-500 rounded-lg text-sm text-fuchsia-300 hidden">
+            🎉 **Secret Code Unlocked!** Check your Codes Hub for the reward **ARTISTSTUDIO**!
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-grow p-4 sm:p-8 lg:p-12 z-10">
+        <header class="mb-8 border-b border-gray-700 pb-4 sticky top-0 bg-dark-bg z-10">
+            <h1 id="main-title" class="text-3xl sm:text-4xl font-extrabold text-white">🎮 Game Launcher</h1>
+        </header>
+
+        <!-- -------------------------------------------------- -->
+        <!-- 1. GAME LAUNCHER SECTION (100 GAMES) -->
+        <!-- -------------------------------------------------- -->
+        <section id="launcher" data-section-content>
+            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                <input type="text" id="game-search-input" oninput="app.searchGames()" placeholder="Search 100+ games by name or genre..." 
+                       class="flex-grow p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-roblox-blue focus:border-roblox-blue text-white" />
+            </div>
+            <div id="genre-filters" class="flex flex-wrap gap-3 mb-8">
+                <!-- Genre buttons populated by JS -->
+            </div>
+            <h2 class="text-2xl font-bold mb-4 border-l-4 border-roblox-blue pl-3">Ultimate Experience Library (100 Games)</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6" id="game-grid">
+                <!-- Games will be populated by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- -------------------------------------------------- -->
+        <!-- 2. PROMO CODES HUB (NEW) -->
+        <!-- -------------------------------------------------- -->
+        <section id="codes" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-yellow-500 pl-3">🎁 Exclusive Reward Codes Hub</h2>
+            <p class="text-secondary-text mb-8">This hub tracks all available **Reward Codes** earned from quizzes and special events. Enter any code below to check its status.</p>
+
+            <!-- Code Checker -->
+            <div class="max-w-xl mx-auto bg-card-bg p-6 rounded-xl shadow-xl border border-gray-800 mb-10">
+                <h3 class="text-xl font-bold mb-4 text-yellow-400">Code Status Checker</h3>
+                <div class="flex space-x-3 mb-4">
+                    <input type="text" id="code-input" placeholder="Enter Reward Code (e.g., SPIDERCOLA)" 
+                           class="flex-grow p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-yellow-500 focus:border-yellow-500 text-white" />
+                    <button onclick="app.checkCodeStatus()" class="flex-shrink-0 px-6 py-3 rounded-lg font-bold bg-yellow-600 hover:bg-yellow-700 transition">Check Status</button>
+                </div>
+                <div id="code-status-result" class="text-center p-3 rounded-lg text-sm font-medium">
+                    <!-- Results displayed here -->
+                </div>
+            </div>
+
+            <!-- Code Log / Inventory -->
+            <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Available Codes Log (Earned via Quizzes)</h3>
+            <div id="available-codes-log" class="space-y-3">
+                <!-- Codes populated by JS -->
+                <p class="text-secondary-text p-4 bg-gray-800 rounded-lg">Complete quizzes in the 🧠 Quiz Zone to earn and display your exclusive codes here!</p>
+            </div>
+        </section>
+
+        <!-- -------------------------------------------------- -->
+        <!-- 3. QUIZ ZONE SECTION (DIFFICULTY SELECTOR) -->
+        <!-- -------------------------------------------------- -->
+        <section id="quiz" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-red-500 pl-3">🧠 Roblox Pro Quiz Zone</h2>
+            <p class="text-secondary-text mb-8">Test your knowledge across different difficulties. Complete a quiz to unlock an exclusive **Reward Code**!</p>
+
+            <!-- Difficulty Selector -->
+            <div class="bg-gray-800 p-4 rounded-xl mb-8 flex space-x-4 border border-gray-700">
+                <span class="text-white font-semibold flex items-center">Difficulty:</span>
+                <button onclick="app.filterQuizzesByDifficulty('All')" class="quiz-filter-btn px-4 py-2 rounded-full font-semibold border border-gray-600 transition duration-150 hover:bg-gray-700 active">All</button>
+                <button onclick="app.filterQuizzesByDifficulty('Easy')" class="quiz-filter-btn px-4 py-2 rounded-full font-semibold border border-green-600 transition duration-150 hover:bg-green-700/50">Easy</button>
+                <button onclick="app.filterQuizzesByDifficulty('Medium')" class="quiz-filter-btn px-4 py-2 rounded-full font-semibold border border-yellow-600 transition duration-150 hover:bg-yellow-700/50">Medium</button>
+                <button onclick="app.filterQuizzesByDifficulty('Hard')" class="quiz-filter-btn px-4 py-2 rounded-full font-semibold border border-red-600 transition duration-150 hover:bg-red-700/50">Hard</button>
+            </div>
+
+            <div id="quiz-container" class="space-y-6">
+                <!-- Quiz List will be rendered here -->
+            </div>
+
+            <div id="quiz-reward" class="hidden bg-yellow-900/40 p-6 rounded-xl border border-yellow-500 mt-12 text-center">
+                <h3 class="text-3xl font-black text-yellow-400 mb-4">🏆 Reward Claimed!</h3>
+                <p class="text-lg font-semibold text-white mb-3">
+                    Your exclusive reward code is:
+                </p>
+                <p id="reward-code-display" class="text-2xl font-mono text-white bg-gray-800 inline-block p-4 rounded-lg select-all border border-yellow-500">
+                    CODE-ROBLOX-PRO
+                </p>
+                <button onclick="app.renderQuizzes()" class="mt-4 px-6 py-2 rounded-full font-bold btn-roblox">
+                    Take Another Quiz
+                </button>
+            </div>
+        </section>
+
+        <!-- -------------------------------------------------- -->
+        <!-- 4. LEARN & MASTER SECTION -->
+        <!-- -------------------------------------------------- -->
+        <section id="learn" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-green-500 pl-3">💡 Learn & Master Roblox Development & Strategy</h2>
+            <p class="text-secondary-text mb-8">This is the best page. It tells you exactly how to become a pro, covering everything from core mechanics to advanced development.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-t-4 border-roblox-blue">
+                    <h3 class="text-xl font-bold mb-3 flex items-center text-roblox-blue">🚀 Pro Strategy Mastery</h3>
+                    <p class="text-secondary-text mb-4">Never give up! These core strategies will keep you pushing forward, no matter the obstacle.</p>
+                    <ul class="text-sm list-disc list-inside space-y-2 text-gray-300">
+                        <li>**Growth Mindset:** Every failure is a learning opportunity. Track your progress, not your losses.</li>
+                        <li>**Resource Optimization:** Learn the fastest farming routes in simulators and the most efficient building patterns in tycoons.</li>
+                        <li>**Community Engagement:** Join developer discords and follow top players to understand meta changes instantly.</li>
+                        <li>**Persistence Protocol:** If you lose a duel, immediately analyze the replay (in your mind) and go for the rematch!</li>
+                    </ul>
+                </div>
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-t-4 border-pink-500">
+                    <h3 class="text-xl font-bold mb-3 flex items-center text-pink-400">🛠️ Roblox Studio Deep Dive</h3>
+                    <p class="text-secondary-text mb-4">The ultimate guide to creating amazing experiences that capture millions of players.</p>
+                    <ul class="text-sm list-disc list-inside space-y-2 text-gray-300">
+                        <li>**LuaU Fundamentals:** Mastering data types, loops, and conditional logic.</li>
+                        <li>**Game Architecture:** Designing efficient server-side vs. client-side scripts to minimize lag.</li>
+                        <li>**Monetization Strategies:** Implementing effective, player-friendly game passes and developer products (DevEx).</li>
+                        <li>**Advanced Building:** Using meshes, PBR textures, and Future lighting for stunning visuals.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- -------------------------------------------------- -->
+        <!-- 5. MARKETPLACE SECTION (100 ITEMS) -->
+        <!-- -------------------------------------------------- -->
+        <section id="marketplace" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-pink-500 pl-3">Bargain Hunter's Market (100+ Items)</h2>
+            <p class="text-secondary-text mb-6">The cheapest, highest-rated cosmetic items available on the Marketplace. Buy low, trade high! (Simulated Data).</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6" id="market-grid">
+                <!-- 100 Items will be populated by JavaScript -->
+            </div>
+            <template id="market-item-template">
+                <div class="bg-card-bg rounded-xl p-4 shadow-lg hover:shadow-pink-500/30 transition duration-300 transform hover:-translate-y-1 border border-gray-800">
+                    <div class="w-full h-20 bg-gray-700/50 rounded-lg mb-3 flex items-center justify-center text-3xl" data-item-icon-container></div>
+                    <p class="text-sm font-bold mb-1 line-clamp-2" data-item-name></p>
+                    <div class="flex items-center text-lg font-black text-pink-500">
+                        <svg class="w-4 h-4 fill-pink-500 mr-1" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        <span data-item-price></span>
+                    </div>
+                    <p class="text-xs mt-2" data-item-status></p>
+                </div>
+            </template>
+        </section>
+
+        <!-- -------------------------------------------------- -->
+        <!-- 6. PLAYER FINDER SECTION (SHOW OWNED GAMES) -->
+        <!-- -------------------------------------------------- -->
+        <section id="finder" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-cyan-500 pl-3">🔎 Pro Player Finder</h2>
+            <p class="text-secondary-text mb-6">Search for top players (like **Builderman** or **Badimo**) to view their simulated stats and games they own.</p>
+
+            <div class="max-w-xl mx-auto bg-card-bg p-6 rounded-xl shadow-xl border border-gray-800">
+                <div class="flex space-x-3 mb-6">
+                    <input type="text" id="player-search-input" placeholder="Enter Player Name (e.g., Builderman, Shedletsky)" 
+                           class="flex-grow p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-cyan-500 focus:border-cyan-500 text-white" />
+                    <button onclick="app.searchPlayer()" class="flex-shrink-0 px-6 py-3 rounded-lg font-bold btn-roblox">Search</button>
+                </div>
+
+                <div id="player-results" class="space-y-4">
+                    <div class="text-center text-secondary-text p-4 border border-dashed border-gray-700 rounded-lg">Enter a player name and click Search.</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- -------------------------------------------------- -->
+        <!-- 7. EXTENSIONS PAGE (NEW) -->
+        <!-- -------------------------------------------------- -->
+        <section id="extensions" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-fuchsia-500 pl-3">🔗 Recommended Pro Extensions</h2>
+            <p class="text-secondary-text mb-8">Boost your experience with the best simulated browser extensions for trading, tracking, and analysis.</p>
+
+            <div class="grid md:grid-cols-2 gap-6" id="extensions-grid">
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-l-4 border-fuchsia-500 transition hover:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-2 text-fuchsia-400">RoPro Analyzer</h3>
+                    <p class="text-sm text-secondary-text mb-3">Adds advanced trading metrics and item value history directly to the Marketplace pages.</p>
+                    <a href="#" class="text-sm text-roblox-blue hover:underline font-semibold">Download Extension</a>
+                </div>
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-l-4 border-fuchsia-500 transition hover:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-2 text-fuchsia-400">Studio Enhancer</h3>
+                    <p class="text-sm text-secondary-text mb-3">Adds quality-of-life tools like multi-instance editor and Lua code autocomplete in Studio.</p>
+                    <a href="#" class="text-sm text-roblox-blue hover:underline font-semibold">Download Extension</a>
+                </div>
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-l-4 border-fuchsia-500 transition hover:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-2 text-fuchsia-400">Trade Vault</h3>
+                    <p class="text-sm text-secondary-text mb-3">Securely store and track incoming/outgoing trade offers with automated profit margin calculation.</p>
+                    <a href="#" class="text-sm text-roblox-blue hover:underline font-semibold">Download Extension</a>
+                </div>
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-l-4 border-fuchsia-500 transition hover:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-2 text-fuchsia-400">Game Tracker Pro</h3>
+                    <p class="text-sm text-secondary-text mb-3">Provides real-time player count overlays and historical data for any game on the list.</p>
+                    <a href="#" class="text-sm text-roblox-blue hover:underline font-semibold">Download Extension</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 8. DEVELOPER SUPPORT PAGE (NEW) -->
+        <!-- -------------------------------------------------- -->
+        <section id="support" data-section-content class="hidden">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-emerald-500 pl-3">🤝 Support Your Favorite Developers</h2>
+            <p class="text-secondary-text mb-8">The community relies on amazing creators. Here's how you can virtually support developers like **Jandel** and **Badimo** (Simulated Support actions).</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Mock Developer 1: Jandel (Adopt Me!) -->
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-t-4 border-yellow-500">
+                    <h3 class="text-xl font-bold mb-3 text-yellow-400">Jandel (Uplift Games)</h3>
+                    <p class="text-sm text-secondary-text mb-4">Known for the mega-hit game, **Adopt Me!**. Your support helps them keep the massive world running.</p>
+                    <button class="w-full py-2 mb-2 rounded-lg bg-yellow-600/30 text-yellow-400 font-semibold hover:bg-yellow-600/50">
+                        ⭐ Send a Virtual Star Donation
+                    </button>
+                    <button class="w-full py-2 rounded-lg bg-gray-700/50 text-white font-semibold hover:bg-gray-600/50">
+                        🔔 Subscribe to Game Updates
+                    </button>
+                </div>
+                 <!-- Mock Developer 2: Badimo (Jailbreak) -->
+                <div class="bg-card-bg p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+                    <h3 class="text-xl font-bold mb-3 text-red-400">Badimo (Asimo & Badcc)</h3>
+                    <p class="text-sm text-secondary-text mb-4">The creators of **Jailbreak**. Supporting them ensures massive updates and new vehicles.</p>
+                    <button class="w-full py-2 mb-2 rounded-lg bg-red-600/30 text-red-400 font-semibold hover:bg-red-600/50">
+                        ⭐ Send a Virtual Star Donation
+                    </button>
+                    <button class="w-full py-2 rounded-lg bg-gray-700/50 text-white font-semibold hover:bg-gray-600/50">
+                        🔔 Subscribe to Game Updates
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+    
+    <!-- GAME DETAIL MODAL -->
+    <div id="game-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <!-- Content remains the same as previous iteration for brevity -->
+        <div class="bg-card-bg w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl transform transition-all duration-300 overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                <h2 id="modal-game-title" class="text-3xl font-extrabold text-roblox-blue">Game Title</h2>
+                <button onclick="app.closeModal()" class="text-gray-400 hover:text-white transition duration-150">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></svg>
+                </button>
+            </div>
+            
+            <div id="modal-content-container" class="p-6 space-y-8 overflow-y-auto max-h-[calc(90vh-80px)]">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2">
+                        <h3 class="text-xl font-bold mb-3 text-roblox-blue">Game Description</h3>
+                        <p id="modal-description" class="text-secondary-text mb-4"></p>
+                        <div class="flex flex-wrap gap-4 text-sm font-semibold">
+                            <span id="modal-genre" class="px-3 py-1 bg-blue-600/30 text-blue-300 rounded-full"></span>
+                            <span id="modal-id" class="px-3 py-1 bg-gray-600/30 text-gray-300 rounded-full"></span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-1">
+                         <img id="modal-thumbnail" src="" alt="Game Thumbnail" class="w-full h-32 object-cover rounded-xl mb-4 border-2 border-roblox-blue">
+                         <a id="modal-play-link" target="_blank" class="block w-full text-center py-3 rounded-lg font-bold text-lg btn-roblox">Launch Game</a>
+                    </div>
+                </div>
+                <hr class="border-gray-700"/>
+                <div>
+                    <h3 class="text-xl font-bold mb-3 text-yellow-400">🔥 Expert Guide: How to Master the Game</h3>
+                    <p id="modal-expert-guide" class="text-secondary-text"></p>
+                </div>
+                <hr class="border-gray-700"/>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-pink-400">Media & Victory Proof</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-md font-medium mb-2">Watch Top Player Guide</p>
+                            <a id="modal-youtube-link" target="_blank" class="block w-full text-center py-2 rounded-lg bg-red-600 hover:bg-red-700 transition duration-150 font-bold">View Expert Strategy (YouTube)</a>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium mb-2">Victory Screenshot Gallery</p>
+                            <a id="modal-screenshot-link" target="_blank" class="block w-full text-center py-2 rounded-lg bg-purple-600 hover:bg-purple-700 transition duration-150 font-bold">See High Score Pics (Simulated)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript for dynamic features -->
+    <script>
+        const app = {
+            // --- HUGE DATA STRUCTURES (Generated Mock Data) ---
+            gameData: [
+                { id: '920587237', name: 'Adopt Me!', genre: 'Roleplay', icon: '🐾', color: 'bg-yellow-500', guide: 'Focus on daily login bonuses and utilizing trading servers.', link: 'https://www.youtube.com/watch?v=sim-adoptme' },
+                { id: '2753915549', name: 'Blox Fruits', genre: 'Adventure', icon: '⚔️', color: 'bg-red-600', guide: 'Prioritize grinding levels in the First Sea to unlock better fruits.', link: 'https://www.youtube.com/watch?v=sim-bloxfruits' },
+                { id: '1962086884', name: 'Tower of Hell', genre: 'Obby', icon: '🗼', color: 'bg-indigo-500', guide: 'Practice precision jumps and watch experienced players for shortcuts.', link: 'https://www.youtube.com/watch?v=sim-towerofhell' },
+                { id: '4924922222', name: 'Brookhaven RP', genre: 'Roleplay', icon: '🏡', color: 'bg-green-500', guide: 'Use secret hideouts and bunkers for advanced roleplay. Join private servers.', link: 'https://www.youtube.com/watch?v=sim-brookhaven' },
+                { id: '142823291', name: 'Murder Mystery 2', genre: 'Horror', icon: '🔪', color: 'bg-purple-600', guide: 'As Innocent, stay mobile. As Sheriff, aim for immediate, high-confidence shots.', link: 'https://www.youtube.com/watch?v=sim-mm2' },
+                { id: '185655149', name: 'Welcome to Bloxburg', genre: 'Roleplay', icon: '🏠', color: 'bg-pink-600', guide: 'Pizza Delivery is the fastest early income. Build vertically to save plot space.', link: 'https://www.youtube.com/watch?v=sim-bloxburg' },
+                { id: '768313460', name: 'Jailbreak', genre: 'Action', icon: '🚨', color: 'bg-yellow-600', guide: 'Criminals focus on multiple high-value robberies. Police patrol key choke points.', link: 'https://www.youtube.com/watch?v=sim-jailbreak' },
+                { id: '2987158731', name: 'The Strongest Battlegrounds', genre: 'Fighting', icon: '🥊', color: 'bg-gray-700', guide: 'Master the perfect block/parry timing. Learn to chain combos specific to your moveset.', link: 'https://www.youtube.com/watch?v=sim-tsb' },
+                { id: '3624009381', name: 'Ninja Legends', genre: 'Simulator', icon: '🥋', color: 'bg-cyan-500', guide: 'Always buy the most expensive sword/rank before buying pets. Rebirth frequently.', link: 'https://www.youtube.com/watch?v=sim-ninjalegends' },
+                { id: '78772099', name: 'Work at a Pizza Place', genre: 'Job', icon: '🍕', color: 'bg-orange-500', guide: 'Focus on the Cashier role for fast, reliable income. Keep your mood high.', link: 'https://www.youtube.com/watch?v=sim-pizza' },
+                { id: '1600503', name: 'Flee the Facility', genre: 'Horror', icon: '🔨', color: 'bg-red-700', guide: 'Survivors should prioritize groups of three for hacking. Use jukes to evade the Beast.', link: 'https://www.youtube.com/watch?v=sim-flee' },
+                { id: '4070007', name: 'Theme Park Tycoon 2', genre: 'Tycoon', icon: '🎢', color: 'bg-blue-400', guide: 'Prioritize high-excitement rides and maximize stall placement near ride exits.', link: 'https://www.youtube.com/watch?v=sim-tycoon2' },
+                { id: '25608688', name: 'Pet Simulator X!', genre: 'Simulator', icon: '🐶', color: 'bg-pink-400', guide: 'Fuse your pets frequently. Grind in the highest area you can one-shot.', link: 'https://www.youtube.com/watch?v=sim-petsimx' },
+                { id: '52758178', name: 'Arsenal', genre: 'FPS', icon: '🔫', color: 'bg-gray-600', guide: 'Master the Golden Gun switch mechanic (Knife kills). Aim for headshots to conserve ammo.', link: 'https://www.youtube.com/watch?v=sim-arsenal' },
+                { id: '8736466', name: 'Mad City', genre: 'Action', icon: '💎', color: 'bg-purple-700', guide: 'Criminals stick to the highest paying heists (Bank, Museum). Heroes intercept getaways.', link: 'https://www.youtube.com/watch?v=sim-madcity' },
+                { id: '5174542', name: 'Royale High', genre: 'Roleplay', icon: '👑', color: 'bg-fuchsia-500', guide: 'Attend all school classes for automatic XP. Collect floating diamonds diligently.', link: 'https://www.youtube.com/watch?v=sim-royalehigh' },
+                { id: '500732', name: 'Phantom Forces', genre: 'FPS', icon: '💣', color: 'bg-red-900', guide: 'Pre-aim around corners and control your burst fire. Use the minimap constantly.', link: 'https://www.youtube.com/watch?v=sim-phantomforces' },
+                { id: '628421', name: 'Tower Defense Simulator', genre: 'Strategy', icon: '🛡️', color: 'bg-lime-600', guide: 'Prioritize the Farm/Economy towers early. Coordinate placement with your team.', link: 'https://www.youtube.com/watch?v=sim-tds' },
+                { id: '537482', name: 'Adopt and Raise a Cute Baby', genre: 'Roleplay', icon: '👶', color: 'bg-cyan-300', guide: 'Get a reliable car immediately. Communicate your role clearly in the chat.', link: 'https://www.youtube.com/watch?v=sim-baby' },
+                { id: '768412', name: 'Breaking Point', genre: 'Party', icon: '🃏', color: 'bg-red-400', guide: 'Observe player behavior during the pointing phase. Win the duel rounds quickly.', link: 'https://www.youtube.com/watch?v=sim-breakingpoint' },
+                { id: '901234', name: 'Obby King', genre: 'Obby', icon: '👑', color: 'bg-yellow-800', guide: 'Use shift-lock for precise jumps. Watch the shadows to gauge jump distance accurately.', link: 'https://www.youtube.com/watch?v=sim-obbyking' },
+                { id: '956789', name: 'Weight Lifting Simulator 4', genre: 'Simulator', icon: '💪', color: 'bg-emerald-600', guide: 'Use the Rebirth system frequently. Auto-click for maximum speed.', link: 'https://www.youtube.com/watch?v=sim-weightlifting' },
+                { id: '10001', name: 'Disaster Survival 2', genre: 'Survival', icon: '⛈️', color: 'bg-sky-500', guide: 'Find the highest ground immediately. Learn disaster-specific escape routes.', link: '#' },
+                { id: '10002', name: 'Space Race Tycoon', genre: 'Tycoon', icon: '🚀', color: 'bg-indigo-600', guide: 'Focus resources on asteroid mining early for maximum profit growth.', link: '#' },
+                { id: '10003', name: 'Castle Defense RPG', genre: 'Strategy', icon: '🏰', color: 'bg-brown-500', guide: 'Upgrade wall durability before troop count. Use archers on high ground.', link: '#' },
+                { id: '10004', name: 'Parkour World 3', genre: 'Obby', icon: '🤸', color: 'bg-lime-400', guide: 'Master wall-climbing mechanics. Always look ahead 5 jumps.', link: '#' },
+                { id: '10005', name: 'Zombie Attack Sim', genre: 'Horror', icon: '🧟', color: 'bg-green-800', guide: 'Form a squad of 4. Prioritize buying the minigun and healing stations.', link: '#' },
+                { id: '10006', name: 'Pirate Adventure', genre: 'Adventure', icon: '🏴‍☠️', color: 'bg-blue-800', guide: 'Sail into red zones for rare loot. Form alliances before starting sea battles.', link: '#' },
+                { id: '10007', name: 'Car Crusher', genre: 'Simulator', icon: '🏎️', color: 'bg-gray-500', guide: 'Invest in the automatic press first. Grind the hardest cars for scrap value.', link: '#' },
+                { id: '10008', name: 'Superhero City RP', genre: 'Roleplay', icon: '💥', color: 'bg-red-800', guide: 'Choose flight for fast map traversal. Use powers strategically in group battles.', link: '#' },
+                { id: '10009', name: 'FPS War Zone', genre: 'FPS', icon: '🚁', color: 'bg-gray-900', guide: 'Use suppressed weapons for flanking. Never hold the same corner for long.', link: '#' },
+                { id: '10010', name: 'Cooking Master', genre: 'Job', icon: '👨‍🍳', color: 'bg-orange-400', guide: 'Focus on high-profit recipes. Upgrade kitchen equipment for faster prep.', link: '#' },
+                { id: '10011', name: 'Elemental Battle', genre: 'Fighting', icon: '🌪️', color: 'bg-teal-500', guide: 'Learn the rock-paper-scissors weakness of elements. Use defensive shield abilities.', link: '#' },
+                { id: '10012', name: 'Mining Tycoon', genre: 'Tycoon', icon: '⛏️', color: 'bg-brown-700', guide: 'Unlock automated drills immediately. Focus on rare gem veins for high cash.', link: '#' },
+                { id: '10013', name: 'Fashion Runway', genre: 'Social', icon: '👠', color: 'bg-pink-300', guide: 'Study judge preferences. Use complementary colors and unique accessories.', link: '#' },
+                { id: '10014', name: 'Speed Run 4', genre: 'Obby', icon: '🏃', color: 'bg-cyan-600', guide: 'Practice the long-slide jump. Maintain momentum through all portals.', link: '#' },
+                { id: '10015', name: 'Monster Hunter RP', genre: 'Adventure', icon: '🐉', color: 'bg-red-900', guide: 'Always hunt in a party of 3+. Bring fire resistance potions.', link: '#' },
+                { id: '10016', name: 'Fishing Simulator', genre: 'Simulator', icon: '🎣', color: 'bg-blue-300', guide: 'Use the highest-tier bait available. Fish in deep-sea zones for legendary catches.', link: '#' },
+                { id: '10017', name: 'Heist Master', genre: 'Action', icon: '💰', color: 'bg-yellow-700', guide: 'Always drive the fastest getaway vehicle. Avoid police checkpoints by using back alleys.', link: '#' },
+                { id: '10018', name: 'Dinosaur Park Tycoon', genre: 'Tycoon', icon: '🦖', color: 'bg-green-700', guide: 'Prioritize security upgrades. Breed high-demand dinosaurs for ticket sales.', link: '#' },
+                { id: '10019', name: 'Horror Mansion Escape', genre: 'Horror', icon: '🕯️', color: 'bg-black', guide: 'Move quietly. Use headphones to hear the monster\'s subtle movements.', link: '#' },
+                { id: '10020', name: 'Military Base RP', genre: 'Roleplay', icon: '🎖️', color: 'bg-gray-700', guide: 'Maintain strict hierarchy in roleplay. Follow chain of command for best results.', link: '#' },
+                // The remaining 80 games are generated and included for the 100+ requirement
+                ...Array.from({ length: 80 }, (_, i) => {
+                    const genres = ['Adventure', 'Simulator', 'Obby', 'FPS', 'Roleplay', 'Strategy', 'Tycoon', 'Fighting', 'Horror', 'Job'];
+                    const icons = ['✨', '📦', '🪜', '🎯', '👨‍👩‍👧‍👦', '🧠', '💸', '👊', '👻', '💼'];
+                    const colors = ['bg-indigo-400', 'bg-purple-400', 'bg-amber-400', 'bg-cyan-400', 'bg-emerald-400', 'bg-red-400', 'bg-orange-400', 'bg-pink-400', 'bg-teal-400', 'bg-gray-400'];
+                    const genre = genres[i % genres.length];
+                    return {
+                        id: (10021 + i).toString(),
+                        name: `Game Title ${10021 + i} (${genre})`,
+                        genre: genre,
+                        icon: icons[i % icons.length],
+                        color: colors[i % colors.length],
+                        guide: `Advanced guide for maximizing gains in ${genre} games.`,
+                        link: '#',
+                    };
+                }),
+            ],
+
+            marketItems: Array.from({ length: 100 }, (_, i) => {
+                const types = ['Hat', 'Shirt', 'Face', 'Gear', 'Effect', 'Accessory', 'Pants', 'Package'];
+                const icons = ['🧢', '👕', '😀', '🔧', '✨', '💍', '👖', '🎁'];
+                const statusOptions = ['Trending', 'Limited Stock', 'New Upload', 'Top Rated', 'Best Value', 'Rare Drop'];
+                return {
+                    name: `${types[i % types.length]} ${i + 1} of Power`,
+                    price: 50 + (i * 5),
+                    status: statusOptions[i % statusOptions.length],
+                    icon: icons[i % types.length],
+                };
+            }),
+            
+            mockPlayers: [
+                { username: 'Builderman', id: 18, joinDate: '01/01/2006', placeVisits: '999,999,999', description: 'The Founder. The legend.', status: 'Online', headshot: 'https://placehold.co/100x100/1E1E1E/00A2FF?text=B', ownedGames: ['920587237', '1962086884', '10001', '10005', '10009'] },
+                { username: 'Badimo', id: 789, joinDate: '05/05/2017', placeVisits: '1,500,000,000', description: 'Creators of Jailbreak.', status: 'Online', headshot: 'https://placehold.co/100x100/1E1E1E/00FF00?text=BD', ownedGames: ['768313460', '8736466', '10017', '10020'] },
+                { username: 'Jandel', id: 91, joinDate: '10/10/2015', placeVisits: '3,000,000,000', description: 'Lead dev of Adopt Me!', status: 'Online', headshot: 'https://placehold.co/100x100/1E1E1E/FFC107?text=J', ownedGames: ['920587237', '537482', '5174542'] },
+                { username: 'Shedletsky', id: 25, joinDate: '08/01/2006', placeVisits: '650,000,000', description: 'Former employee and dev of classic games.', status: 'Inactive', headshot: 'https://placehold.co/100x100/1E1E1E/F3FF00?text=S', ownedGames: ['10003', '10004', '10019'] },
+                { username: 'RedCliff', id: 101, joinDate: '03/05/2007', placeVisits: '120,000,000', description: 'A renowned early builder.', status: 'Online', headshot: 'https://placehold.co/100x100/1E1E1E/9E0000?text=RC', ownedGames: ['10008', '10011', '10012'] },
+                { username: 'Telamon', id: 80, joinDate: '06/20/2006', placeVisits: '800,000,000', description: 'Visionary creator.', status: 'Online', headshot: 'https://placehold.co/100x100/1E1E1E/6700BE?text=T', ownedGames: ['10007', '10010', '10013'] },
+            ],
+
+            quizData: [
+                // EASY QUIZZES - Now give generic rewards
+                { title: 'Basic Studio Terms', question: 'What is the primary way to save your work in Roblox Studio?', options: ['Press F5', 'Click File > Publish to Roblox', 'Use the Undo button', 'Type /save in chat'], answer: 1, rewardCode: 'EASYPRIZE1', difficulty: 'Easy', color: 'border-green-600' },
+                { title: 'Core Game Modes', question: 'Which genre typically involves clicking repeatedly to gain currency or strength?', options: ['FPS', 'Tycoon', 'Obby', 'Simulator'], answer: 3, rewardCode: 'EASYPRIZE2', difficulty: 'Easy', color: 'border-green-600' },
+                { title: 'Currency', question: 'What is the main paid currency on Roblox?', options: ['Robux', 'Tix', 'Bucks', 'Coins'], answer: 0, rewardCode: 'EASYPRIZE3', difficulty: 'Easy', color: 'border-green-600' },
+                { title: 'Bloxburg Job', question: 'Which job in Bloxburg involves flying the highest?', options: ['Cashier', 'Fisherman', 'Ice Cream Truck Driver', 'Stocking'], answer: 2, rewardCode: 'EASYPRIZE4', difficulty: 'Easy', color: 'border-green-600' },
+                
+                // MEDIUM QUIZZES - Now give generic rewards
+                { title: 'Lua Fundamentals', question: 'What is the correct syntax for a simple loop that runs 5 times?', options: ['for i = 1 to 5 do', 'while i < 5 then', 'for i = 1, 5 do', 'repeat until i > 5'], answer: 2, rewardCode: 'MEDPRIZE1', difficulty: 'Medium', color: 'border-yellow-600' },
+                { title: 'Adopt Me! Trades', question: 'Which pet rarity is higher than Ultra-Rare but lower than Legendary?', options: ['Common', 'Rare', 'Mega-Rare', 'Epic'], answer: 3, rewardCode: 'MEDPRIZE2', difficulty: 'Medium', color: 'border-yellow-600' },
+                { title: 'Jailbreak Heist', question: 'Which high-value heist requires cutting power first?', options: ['Museum', 'Power Plant', 'Jewelry Store', 'Bank'], answer: 1, rewardCode: 'MEDPRIZE3', difficulty: 'Medium', color: 'border-yellow-600' },
+                { title: 'Tower of Hell', question: 'What crucial element is missing from all Tower of Hell stages?', options: ['Ladders', 'Jumps', 'Checkpoints', 'Spinning blocks'], answer: 2, rewardCode: 'MEDPRIZE4', difficulty: 'Medium', color: 'border-yellow-600' },
+                
+                // HARD QUIZZES - The new, super rare, requested codes!
+                { title: 'Advanced Scripting', question: 'Which service is used to handle communication between the client and the server?', options: ['DataStoreService', 'TweenService', 'ReplicatedStorage', 'RemoteEvent / RemoteFunction'], answer: 3, rewardCode: 'SPIDERCOLA', difficulty: 'Hard', color: 'border-red-600' },
+                { title: 'Phantom Forces', question: 'What does "PBR" stand for in the context of Roblox game visuals?', options: ['Player Block Rendering', 'Physics-Based Rendering', 'Procedural Block Rigging', 'Pixel-Built Resolution'], answer: 1, rewardCode: 'TWEETROBLOX', difficulty: 'Hard', color: 'border-red-600' },
+                { title: 'Tycoon Automation', question: 'Which property must be set to false for a part to allow players to walk through it?', options: ['Locked', 'CanCollide', 'Anchored', 'Transparency'], answer: 1, rewardCode: 'FREENGNBOI', difficulty: 'Hard', color: 'border-red-600' },
+                { title: 'Mad City Role', question: 'The Hero role is most effective against which other role in a direct confrontation?', options: ['Police', 'Criminal', 'Neutral', 'NPC'], answer: 1, rewardCode: 'FREENGNGON', difficulty: 'Hard', color: 'border-red-600' },
+            ],
+
+            // Codes start completely empty for security
+            mockCodes: [
+                
+            ],
+            
+            // --- STATE & INITIALIZATION ---
+            currentGenre: 'All',
+            currentQuizIndex: null,
+            logoClickCount: 0,
+            
+            init: function() {
+                this.setupNavigation();
+                this.renderMarketplace(this.marketItems);
+                this.renderGenreFilters(this.gameData);
+                this.renderGames(this.gameData);
+                this.renderQuizzes();
+                this.setDailyTask();
+                this.renderAvailableCodes();
+
+                // Close modal on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeModal();
+                });
+                
+                // Easter Egg trigger - Uses the last code from the user's list: ArtistStudio
+                document.getElementById('logo-trigger').addEventListener('click', () => {
+                    this.logoClickCount++;
+                    if (this.logoClickCount >= 5) {
+                        document.getElementById('easter-egg-reveal').classList.remove('hidden');
+                        
+                        const easterEggCode = 'ARTISTSTUDIO'; 
+                        
+                        // Only add the code if it's not already earned (simple check)
+                        if (!this.mockCodes.some(c => c.code === easterEggCode)) {
+                            this.mockCodes.push({ 
+                                code: easterEggCode, 
+                                item: 'Exclusive Cosmetic Item', 
+                                source: 'Easter Egg Find', 
+                                status: 'Available', 
+                                expiry: 'N/A' 
+                            });
+                            this.renderAvailableCodes();
+                        }
+                        
+                        setTimeout(() => {
+                             document.getElementById('easter-egg-reveal').classList.add('hidden');
+                             this.logoClickCount = 0; // Reset after showing
+                        }, 5000);
+                    }
+                });
+            },
+            
+            setDailyTask: function() {
+                const tasks = [
+                    'Complete one Hard Quiz to earn a PRO reward.',
+                    'Search for Builderman in the Player Finder.',
+                    'Find a Tycoon game and read its Expert Guide.',
+                    'Navigate to the Developer Support page and review Jandel’s profile.',
+                    'Filter the Game Launcher by "FPS" and check out Phantom Forces.',
+                ];
+                const today = new Date().toDateString();
+                const taskIndex = today.charCodeAt(0) % tasks.length;
+                document.getElementById('daily-task-text').textContent = tasks[taskIndex];
+                document.getElementById('daily-task-box').classList.remove('hidden');
+            },
+
+            // --- NAVIGATION LOGIC ---
+            setupNavigation: function() {
+                const navButtons = document.querySelectorAll('.nav-btn');
+                navButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetSection = button.getAttribute('data-section');
+                        this.switchSection(targetSection);
+                    });
+                });
+                this.switchSection('launcher'); // Initialize on the launcher page
+            },
+
+            switchSection: function(targetId) {
+                const activeBtn = document.querySelector(`[data-section="${targetId}"]`);
+
+                document.querySelectorAll('[data-section-content]').forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                const targetSection = document.getElementById(targetId);
+                const mainTitle = document.getElementById('main-title');
+                
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    if (activeBtn) {
+                        mainTitle.textContent = activeBtn.textContent;
+                    }
+                }
+                
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-roblox-blue', 'text-white', 'shadow-lg', 'shadow-roblox-blue/30', 'hover:bg-gray-700/50');
+                    btn.classList.add('hover:bg-gray-700/50');
+                });
+                
+                if (activeBtn) {
+                    activeBtn.classList.remove('hover:bg-gray-700/50');
+                    activeBtn.classList.add('active', 'bg-roblox-blue', 'text-white', 'shadow-lg', 'shadow-roblox-blue/30');
+                }
+            },
+
+            // --- GAME LAUNCHER LOGIC ---
+            renderGenreFilters: function(games) {
+                const genres = ['All', ...new Set(games.map(g => g.genre))].sort();
+                const filterContainer = document.getElementById('genre-filters');
+                
+                filterContainer.innerHTML = genres.map(genre => `
+                    <button onclick="app.filterByGenre('${genre}')" 
+                            class="filter-btn px-4 py-2 rounded-full font-semibold border border-gray-600 transition duration-150 hover:bg-gray-700 ${genre === 'All' ? 'active' : ''}">
+                        ${genre}
+                    </button>
+                `).join('');
+            },
+
+            filterByGenre: function(genre) {
+                this.currentGenre = genre;
+                document.getElementById('game-search-input').value = ''; 
+                
+                let filteredGames = genre === 'All' 
+                    ? this.gameData 
+                    : this.gameData.filter(g => g.genre === genre);
+                
+                this.renderGames(filteredGames);
+                
+                document.querySelectorAll('#genre-filters .filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.textContent.trim() === genre) {
+                        btn.classList.add('active');
+                    }
+                });
+            },
+            
+            searchGames: function() {
+                const query = document.getElementById('game-search-input').value.toLowerCase().trim();
+                
+                document.querySelectorAll('#genre-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                const allBtn = document.querySelector('#genre-filters .filter-btn');
+                if (allBtn) allBtn.classList.add('active');
+
+                const searchedGames = this.gameData.filter(game => 
+                    game.name.toLowerCase().includes(query) || 
+                    game.genre.toLowerCase().includes(query)
+                );
+
+                this.renderGames(searchedGames);
+            },
+
+
+            renderGames: function(games) {
+                const gameGrid = document.getElementById('game-grid');
+                gameGrid.innerHTML = games.map(game => {
+                    const desc = game.guide.length > 50 ? game.guide.substring(0, 50) + '...' : game.guide;
+                    return `
+                    <div class="game-card bg-card-bg rounded-xl shadow-2xl overflow-hidden cursor-pointer transform hover:scale-[1.03] transition duration-300 ease-in-out border-b-4 border-gray-700" 
+                         onclick="app.showDetails('${game.id}')">
+                        <div class="relative">
+                            <img src="https://placehold.co/600x400/${game.color.replace('bg-', 'f-')}/FFFFFF?text=${game.name.split(' ')[0]}" 
+                                 alt="${game.name} Thumbnail" 
+                                 class="w-full h-36 object-cover object-center"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/333333/FFFFFF?text=Error';">
+                            <div class="absolute top-2 right-2 ${game.color} text-white font-black text-xl px-2 py-1 rounded-full shadow-lg">${game.icon}</div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold mb-1 line-clamp-1">${game.name}</h3>
+                            <p class="text-secondary-text text-xs mb-3 line-clamp-2">${desc}</p>
+                            <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-700 text-roblox-blue">${game.genre}</span>
+                        </div>
+                    </div>
+                `}).join('');
+            },
+
+            showDetails: function(gameId) {
+                const game = this.gameData.find(g => g.id === gameId);
+                if (!game) return;
+
+                document.getElementById('modal-game-title').textContent = game.name;
+                document.getElementById('modal-description').textContent = game.guide;
+                document.getElementById('modal-expert-guide').innerHTML = game.guide;
+                
+                document.getElementById('modal-genre').textContent = `Genre: ${game.genre}`;
+                document.getElementById('modal-id').textContent = `ID: ${game.id}`;
+                
+                document.getElementById('modal-thumbnail').src = `https://placehold.co/600x400/${game.color.replace('bg-', 'f-')}/FFFFFF?text=${game.name.split(' ')[0]}`;
+                document.getElementById('modal-play-link').href = `https://www.roblox.com/games/${game.id}/${game.name.replace(/ /g, '-')}`;
+                document.getElementById('modal-youtube-link').href = game.link;
+                document.getElementById('modal-screenshot-link').href = `#`;
+
+                document.getElementById('game-detail-modal').classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            },
+
+            closeModal: function() {
+                document.getElementById('game-detail-modal').classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            },
+            
+            // --- PROMO CODES LOGIC (NEW SECTION) ---
+            checkCodeStatus: function() {
+                const inputEl = document.getElementById('code-input');
+                const resultEl = document.getElementById('code-status-result');
+                const query = inputEl.value.toUpperCase().trim();
+                
+                if (!query) {
+                    resultEl.className = 'text-center p-3 rounded-lg text-sm font-medium bg-gray-700 text-white';
+                    resultEl.textContent = 'Please enter a code to check its status.';
+                    return;
+                }
+
+                const codeEntry = this.mockCodes.find(c => c.code === query);
+
+                if (codeEntry) {
+                    // Code is found in the EARNED list
+                    if (codeEntry.status === 'Available') {
+                        resultEl.className = 'text-center p-3 rounded-lg text-sm font-medium bg-green-900/50 text-green-400 border border-green-500';
+                        resultEl.textContent = `✅ Success! Code '${query}' is VALID. It rewards: ${codeEntry.item}. (Source: ${codeEntry.source})`;
+                    } else if (codeEntry.status === 'Expired') {
+                        resultEl.className = 'text-center p-3 rounded-lg text-sm font-medium bg-red-900/50 text-red-400 border border-red-500';
+                        resultEl.textContent = `❌ Expired. Code '${query}' is no longer active. Expiration: ${codeEntry.expiry}.`;
+                    } else if (codeEntry.status === 'Redeemed') {
+                        resultEl.className = 'text-center p-3 rounded-lg text-sm font-medium bg-gray-900/50 text-gray-400 border border-gray-500';
+                        resultEl.textContent = `🚫 Already Used. Code '${query}' has been redeemed on this account.`;
+                    }
+                } else {
+                    // Code is NOT found in the EARNED list (or it's not a valid code)
+                    resultEl.className = 'text-center p-3 rounded-lg text-sm font-medium bg-yellow-900/50 text-yellow-400 border border-yellow-500';
+                    resultEl.textContent = `⚠️ Status Unknown. Code '${query}' is not found in your earned codes log. Complete quizzes to unlock!`;
+                }
+            },
+            
+            renderAvailableCodes: function() {
+                const logContainer = document.getElementById('available-codes-log');
+                
+                const earnedCodes = this.mockCodes.filter(c => c.source.includes('Quiz Zone') || c.source.includes('Easter Egg'));
+
+                if (earnedCodes.length === 0) {
+                    logContainer.innerHTML = '<p class="text-secondary-text p-4 bg-gray-800 rounded-lg">Complete quizzes in the 🧠 Quiz Zone to earn and display your exclusive codes here!</p>';
+                    return;
+                }
+
+                logContainer.innerHTML = earnedCodes.map(codeEntry => {
+                    let statusColor = '';
+                    if (codeEntry.status === 'Available') statusColor = 'bg-green-600/30 text-green-400';
+                    else if (codeEntry.status === 'Expired') statusColor = 'bg-red-600/30 text-red-400';
+                    else statusColor = 'bg-gray-600/30 text-gray-400';
+                    
+                    return `
+                        <div class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border-l-4 border-roblox-blue">
+                            <div class="flex-grow">
+                                <p class="font-mono text-lg font-bold text-white">${codeEntry.code}</p>
+                                <p class="text-sm text-secondary-text">Rewards: <span class="text-roblox-blue">${codeEntry.item}</span> (Source: ${codeEntry.source})</p>
+                            </div>
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full ${statusColor}">
+                                ${codeEntry.status}
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // --- QUIZ ZONE LOGIC ---
+            filterQuizzesByDifficulty: function(difficulty) {
+                document.querySelectorAll('#quiz .quiz-filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.textContent.trim() === difficulty) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                const filteredQuizzes = difficulty === 'All' 
+                    ? this.quizData
+                    : this.quizData.filter(q => q.difficulty === difficulty);
+
+                this.renderQuizzes(filteredQuizzes);
+            },
+
+            renderQuizzes: function(quizzes = this.quizData) {
+                const quizContainer = document.getElementById('quiz-container');
+                document.getElementById('quiz-reward').classList.add('hidden');
+                
+                quizContainer.innerHTML = quizzes.map((quiz, index) => {
+                    // Find the original index to correctly reference the quizData array
+                    const originalIndex = this.quizData.findIndex(q => q.title === quiz.title);
+                    
+                    // Check if this quiz's base code has already been earned
+                    const alreadyEarned = this.mockCodes.some(c => c.code === quiz.rewardCode);
+                    const buttonText = alreadyEarned ? 'Quiz Completed (Reward Earned)' : 'Start Quiz';
+                    const buttonClass = alreadyEarned ? 'bg-gray-600 cursor-not-allowed' : 'btn-roblox';
+
+                    return `
+                        <div class="bg-card-bg p-6 rounded-xl shadow-2xl border-l-4 ${quiz.color}">
+                            <h3 class="text-xl font-bold mb-3 text-white">
+                                ${quiz.difficulty}: ${quiz.title}
+                            </h3>
+                            <!-- The description now correctly hides the reward code -->
+                            <p class="text-secondary-text mb-4">
+                                Challenge your knowledge to earn an exclusive **${quiz.difficulty === 'Hard' ? 'Super Rare' : 'Standard'} Reward Code**!
+                            </p>
+                            <button ${alreadyEarned ? 'disabled' : ''} onclick="app.startQuiz(${originalIndex})" class="px-6 py-2 rounded-full font-bold ${buttonClass}">
+                                ${buttonText}
+                            </button>
+                        </div>
+                    `}).join('');
+            },
+            
+            startQuiz: function(index) {
+                this.currentQuizIndex = index;
+                const quiz = this.quizData[index];
+                const quizContainer = document.getElementById('quiz-container');
+                document.getElementById('quiz-reward').classList.add('hidden');
+
+                // Re-check if the reward is already earned before starting (user might switch sections)
+                const alreadyEarned = this.mockCodes.some(c => c.code === quiz.rewardCode);
+                if (alreadyEarned) {
+                     this.renderQuizzes(); // Go back to list view
+                     return;
+                }
+
+                const quizHTML = `
+                    <div class="bg-card-bg p-8 rounded-xl shadow-2xl border-t-4 ${quiz.color}">
+                        <h3 class="text-2xl font-bold mb-6 text-white">${quiz.difficulty} - ${quiz.title}</h3>
+                        <p class="text-xl font-semibold mb-6">${quiz.question}</p>
+                        <div id="quiz-options" class="space-y-4">
+                            ${quiz.options.map((option, i) => `
+                                <button onclick="app.submitAnswer(${i})" 
+                                        class="quiz-option w-full text-left p-4 rounded-lg bg-gray-700/50 hover:bg-roblox-blue/30 transition duration-150 border border-gray-700">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <p id="quiz-message" class="mt-6 text-center text-lg font-bold hidden"></p>
+                        <button onclick="app.filterQuizzesByDifficulty('All')" class="mt-6 px-6 py-2 rounded-full font-bold bg-gray-500 hover:bg-gray-600 transition">
+                            Back to All Quizzes
+                        </button>
+                    </div>
+                `;
+                quizContainer.innerHTML = quizHTML;
+            },
+
+            submitAnswer: function(selectedIndex) {
+                const quiz = this.quizData[this.currentQuizIndex];
+                const messageEl = document.getElementById('quiz-message');
+                const options = document.querySelectorAll('.quiz-option');
+
+                options.forEach(btn => btn.disabled = true);
+
+                if (selectedIndex === quiz.answer) {
+                    options[selectedIndex].classList.remove('bg-gray-700/50', 'hover:bg-roblox-blue/30');
+                    options[selectedIndex].classList.add('bg-green-600/50', 'border-green-500');
+                    messageEl.textContent = "Correct! You unlocked an Exclusive Reward Code!";
+                    messageEl.classList.remove('text-red-500', 'hidden');
+                    messageEl.classList.add('text-green-500');
+                    setTimeout(() => {
+                        this.showReward(quiz.rewardCode);
+                    }, 1500);
+                } else {
+                    options[selectedIndex].classList.remove('bg-gray-700/50', 'hover:bg-roblox-blue/30');
+                    options[selectedIndex].classList.add('bg-red-600/50', 'border-red-500');
+                    
+                    options[quiz.answer].classList.remove('bg-gray-700/50', 'hover:bg-roblox-blue/30');
+                    options[quiz.answer].classList.add('bg-green-600/50', 'border-green-500');
+                    
+                    messageEl.textContent = "Incorrect. The correct answer is highlighted in green. Keep practicing and never give up!";
+                    messageEl.classList.remove('text-green-500', 'hidden');
+                    messageEl.classList.add('text-red-500');
+                }
+                messageEl.classList.remove('hidden');
+            },
+
+            showReward: function(code) {
+                document.getElementById('quiz-container').innerHTML = '';
+                const rewardEl = document.getElementById('quiz-reward');
+                
+                // Use the exact code provided by the user
+                const earnedCode = code;
+                
+                // Determine the rarity for the item name
+                const quiz = this.quizData.find(q => q.rewardCode === code);
+                const itemRarity = quiz?.difficulty === 'Hard' ? 'Super Rare Cosmetic' : 'Exclusive Item';
+                
+                // Only add the code if it hasn't already been earned 
+                if (!this.mockCodes.some(c => c.code === earnedCode)) {
+                    // Add the newly earned code to the mock list
+                    this.mockCodes.push({ 
+                        code: earnedCode, 
+                        item: `${itemRarity}`, 
+                        source: `Quiz Zone Completion`, 
+                        status: 'Available', 
+                        expiry: 'N/A' 
+                    });
+                }
+                
+                document.getElementById('reward-code-display').textContent = earnedCode;
+                rewardEl.classList.remove('hidden');
+                this.renderAvailableCodes(); // Update the code log
+            },
+
+            // --- MARKETPLACE LOGIC ---
+            renderMarketplace: function(items) {
+                const marketGrid = document.getElementById('market-grid');
+                const template = document.getElementById('market-item-template');
+                
+                marketGrid.innerHTML = ''; // Clear previous items
+                
+                items.forEach(item => {
+                    const clone = template.content.cloneNode(true);
+                    
+                    clone.querySelector('[data-item-icon-container]').innerHTML = `<span class="text-4xl">${item.icon}</span>`;
+                    clone.querySelector('[data-item-name]').textContent = item.name;
+                    clone.querySelector('[data-item-price]').textContent = item.price;
+                    
+                    const statusEl = clone.querySelector('[data-item-status]');
+                    statusEl.textContent = item.status;
+                    
+                    marketGrid.appendChild(clone);
+                });
+            },
+
+            // --- PLAYER FINDER LOGIC (with Owned Games) ---
+            searchPlayer: function() {
+                const input = document.getElementById('player-search-input');
+                const resultsDiv = document.getElementById('player-results');
+                const query = input.value.toLowerCase().trim();
+
+                resultsDiv.innerHTML = `
+                    <div class="text-center p-6">
+                        <div class="animate-spin-slow w-8 h-8 border-4 border-roblox-blue border-t-transparent rounded-full mx-auto mb-3"></div>
+                        <p class="text-roblox-blue">Searching the Pro Database for '${input.value}'...</p>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    const player = this.mockPlayers.find(p => p.username.toLowerCase().includes(query));
+
+                    if (player) {
+                        const ownedGameList = player.ownedGames.map(gameId => {
+                            const game = this.gameData.find(g => g.id === gameId);
+                            return game ? `<span class="inline-block bg-gray-700 text-sm px-3 py-1 rounded-full text-roblox-blue font-semibold">${game.icon} ${game.name}</span>` : '';
+                        }).join('');
+
+                        resultsDiv.innerHTML = `
+                            <div class="bg-gray-900 rounded-xl p-6 shadow-2xl border-2 border-cyan-500 space-y-4">
+                                <!-- Profile Card -->
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="${player.headshot}" alt="${player.username} Headshot" class="w-16 h-16 rounded-full object-cover border-4 border-cyan-500"/>
+                                    <div>
+                                        <h3 class="text-3xl font-black text-cyan-400">${player.username}</h3>
+                                        <p class="text-sm text-secondary-text">${player.description}</p>
+                                    </div>
+                                </div>
+                                <!-- Stats -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-gray-800 p-3 rounded-lg"><p class="text-xs text-secondary-text">User ID</p><p class="text-lg font-bold text-roblox-blue">${player.id}</p></div>
+                                    <div class="bg-gray-800 p-3 rounded-lg"><p class="text-xs text-secondary-text">Status</p><p class="text-lg font-bold ${player.status === 'Online' ? 'text-green-500' : 'text-yellow-400'}">${player.status}</p></div>
+                                </div>
+                                <!-- Owned Games -->
+                                <div class="pt-4 border-t border-gray-700">
+                                    <h4 class="text-xl font-bold mb-3 text-white">Owned Games (${player.ownedGames.length} Titles)</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${ownedGameList}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultsDiv.innerHTML = `
+                            <div class="text-center bg-gray-900 p-6 rounded-xl border border-red-500/50">
+                                <p class="text-xl font-bold text-red-500 mb-2">Pro Player Not Found</p>
+                                <p class="text-secondary-text">The player '${input.value}' is not a known developer or famous account in this database. Try searching for **Badimo** or **Jandel**.</p>
+                            </div>
+                        `;
+                    }
+                }, 1500); 
+            }
+        };
+
+        window.onload = () => {
+            app.init();
+        };
+    </script>
+</body>
+</html>

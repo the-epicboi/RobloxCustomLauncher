@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta and title -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roblox Launcher - Liquid Glass Edition</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React and ReactDOM (UMD for browser) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel for JSX transform in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Base styles -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      min-height: 100vh;
+    }
+
+    /* Custom scrollbar for sleek look */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Main content area offset for fixed sidebar */
+    .content-area {
+      margin-left: 16rem; /* Matches w-64 */
+      padding: 2.5rem;    /* Matches p-10 */
+    }
+
+    /* Responsive adjustments for mobile */
+    @media (max-width: 768px) {
+      .content-area {
+        margin-left: 0;
+        padding-top: 6rem; /* space under fixed sidebar row */
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        z-index: 10;
+        flex-direction: row;
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.2);
+        backdrop-filter: blur(10px);
+      }
+      .sidebar h1 {
+        display: none;
+      }
+      .sidebar nav {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        margin-top: 0;
+      }
+      .sidebar button {
+        padding: 0.5rem 0.75rem;
+        flex-direction: column;
+        text-align: center;
+        font-size: 0.875rem;
+      }
+      .sidebar button span {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // === Icons (inline SVGs) ===
+    const LayoutGrid = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+      </svg>
+    );
+
+    const Store = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 7H2v10h20M6 13l4 4 6-6" />
+        <path d="M3 7v10" />
+        <path d="M21 7v10" />
+      </svg>
+    );
+
+    const HelpCircle = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+        <path d="M12 17h.01" />
+      </svg>
+    );
+
+    const Copy = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="13" height="13" x="9" y="9" rx="2" ry="2" />
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+      </svg>
+    );
+
+    const RotateCcw = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-3.6 7.5H3" />
+        <path d="M3 11v6H9" />
+      </svg>
+    );
+
+    const Check = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||24} height={props.size||24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    );
+
+    // === Data: Quiz ===
+    const quizQuestions = [
+      { question: "What is the official virtual currency used in Roblox?", options: ["Gems", "Robux", "Coins", "Blox"], answer: "Robux" },
+      { question: "What does 'Obby' stand for in Roblox?", options: ["Official Lobby", "Obstacle Course", "Obby's World", "Orange Blobby"], answer: "Obstacle Course" },
+      { question: "What company develops and publishes Roblox?", options: ["Epic Games", "Mojang", "Roblox Corporation", "Electronic Arts"], answer: "Roblox Corporation" },
+      { question: "What is the name of the default character avatar given to new players?", options: ["Steve", "Default Dan", "Bacon Hair", "Noob"], answer: "Noob" },
+      { question: "Can you create and publish your own games on Roblox?", options: ["Yes", "No", "Only if you pay", "Only on PC"], answer: "Yes" },
+    ];
+
+    // === Data: Popular game names (consistent with your original) ===
+    const POPULAR_NAMES = [
+      'Brookhaven 🏡RP', 'Adopt Me! 🥚', 'Tower of Hell 🧗', 'Blox Fruits ⚔️', 'Murder Mystery 2 🔪',
+      'Piggy 🐷', 'Royale High 👑', 'Arsenal 🔫', 'Jailbreak 🚨', 'MeepCity 🏝️',
+      'Natural Disaster Survival 🌪️', 'Work at a Pizza Place 🍕', 'Welcome to Bloxburg 🏗️',
+      'The Mimic 👻', 'Evade 🏃', 'Doors 🚪', 'Pet Simulator X 🐶', 'BedWars 🛏️',
+      'Flee the Facility 🔑', 'Epic Minigames 🕹️', 'Sonic Speed Simulator 💨',
+      'Anime Fighters Simulator 🔥', 'Shindo Life 🍜', 'King Legacy ⚔️', 'Build A Boat For Treasure ⛵',
+      'All Star Tower Defense 🗼', 'Tower Defense Simulator 👾', 'Funky Friday 🎤', 'My Restaurant 🍽️',
+      'Zombie Uprising 🧟', 'GPO 🏴‍☠️', 'Your Bizarre Adventure 💫', 'Strongman Simulator 💪',
+      'Mining Simulator 2 ⛏️', 'Car Dealership Tycoon 🚗', 'Survive the Killer! 🔪', 'Loomian Legacy 🔮',
+      'Mad City 🚔', 'Theme Park Tycoon 2 🎢', 'Super Striker League ⚽', 'Islands 🏝️',
+      'Dragon Adventures 🐉', 'Starving Artists 🎨', 'Creatures of Sonaria 🐾', 'Vehicle Simulator 🏎️',
+      'Escape Room 🗝️', 'Weight Lifting Simulator 🏋️', 'Anime Dimensions ✨', 'Restaurant Tycoon 2 👩‍🍳'
+    ];
+
+    // === Data: name → universeId mapping (top titles wired; rest fall back gracefully) ===
+    // Note: Roblox thumbnails for games use universeIds on v1/games/icons, not placeIds.
+    const GAME_MAP = [
+      { name: 'Brookhaven 🏡RP', universeId: 4924922222 },
+      { name: 'Adopt Me! 🥚', universeId: 920587237 },
+      { name: 'Tower of Hell 🧗', universeId: 1962086868 },
+      { name: 'Blox Fruits ⚔️', universeId: 2753915549 },
+      { name: 'Murder Mystery 2 🔪', universeId: 142823291 },
+      { name: 'Piggy 🐷', universeId: 4490140739 },
+      { name: 'Royale High 👑', universeId: 735030788 },
+      { name: 'Arsenal 🔫', universeId: 286090429 },
+      { name: 'Jailbreak 🚨', universeId: 606849621 },
+      { name: 'MeepCity 🏝️', universeId: 4972091010 },
+      { name: 'Natural Disaster Survival 🌪️', universeId: 189707 },
+      { name: 'Work at a Pizza Place 🍕', universeId: 192800 },
+      { name: 'Welcome to Bloxburg 🏗️', universeId: 185655149 },
+      { name: 'The Mimic 👻', universeId: 6243691305 },
+      { name: 'Evade 🏃', universeId: 9872472334 },
+      { name: 'Doors 🚪', universeId: 6516141723 },
+      { name: 'Pet Simulator X 🐶', universeId: 6284583030 },
+      { name: 'BedWars 🛏️', universeId: 6872265039 },
+      { name: 'Flee the Facility 🔑', universeId: 893973440 },
+      { name: 'Epic Minigames 🕹️', universeId: 133211152 },
+      { name: 'Sonic Speed Simulator 💨', universeId: 9049840490 },
+      { name: 'Anime Fighters Simulator 🔥', universeId: 6299805724 },
+      { name: 'Shindo Life 🍜', universeId: 4616652839 },
+      { name: 'King Legacy ⚔️', universeId: 4520749081 },
+      { name: 'Build A Boat For Treasure ⛵', universeId: 537413528 },
+      { name: 'All Star Tower Defense 🗼', universeId: 4996049426 },
+      { name: 'Tower Defense Simulator 👾', universeId: 3260590327 },
+      { name: 'Funky Friday 🎤', universeId: 6447798030 },
+      { name: 'My Restaurant 🍽️', universeId: 4490140739 }, // update if needed
+      { name: 'Zombie Uprising 🧟', universeId: 5101169549 },
+      { name: 'GPO 🏴‍☠️', universeId: 1730877806 },
+      { name: 'Your Bizarre Adventure 💫', universeId: 2802484924 },
+      { name: 'Strongman Simulator 💪', universeId: 6766156863 },
+      { name: 'Mining Simulator 2 ⛏️', universeId: 9551640993 },
+      { name: 'Car Dealership Tycoon 🚗', universeId: 1554960397 },
+      { name: 'Survive the Killer! 🔪', universeId: 4597012010 },
+      { name: 'Loomian Legacy 🔮', universeId: 3061645787 },
+      { name: 'Mad City 🚔', universeId: 1224212277 },
+      { name: 'Theme Park Tycoon 2 🎢', universeId: 69184822 },
+      { name: 'Super Striker League ⚽', universeId: 3101667897 },
+      { name: 'Islands 🏝️', universeId: 4872321990 },
+      { name: 'Dragon Adventures 🐉', universeId: 3475397644 },
+      { name: 'Starving Artists 🎨', universeId: 9551640993 }, // placeholder; update if desired
+      { name: 'Creatures of Sonaria 🐾', universeId: 5233782396 },
+      { name: 'Vehicle Simulator 🏎️', universeId: 171391948 },
+      { name: 'Escape Room 🗝️', universeId: 294790062 },
+      { name: 'Weight Lifting Simulator 🏋️', universeId: 176246610 },
+      { name: 'Anime Dimensions ✨', universeId: 6938803436 },
+      { name: 'Restaurant Tycoon 2 👩‍🍳', universeId: 2810309537 }
+    ];
+
+    // === Helpers: Thumbnails and deep links ===
+    // Correct, working thumbnail endpoint for games (uses universeIds)
+    const thumbnailForPlace = (universeId) =>
+      `https://www.roblox.com/v1/games/icons?universeIds=${universeId}&size=512&format=Png&isCircular=false`;
+
+    // Marketplace thumbnails (catalog assets)
+    const thumbnailForCatalog = (assetId) =>
+      `https://www.roblox.com/v1/assets/${assetId}/thumbnail?size=420x420&format=Png`;
+
+    // Build deep link and web fallback for launching
+    const buildLaunch = (placeId) => {
+      const deepLink = `roblox://experiences/start?placeId=${placeId}`;
+      const webLink = `https://www.roblox.com/games/${placeId}`;
+      return { deepLink, webLink };
+    };
+
+    // === Games: generate from name list and mapping ===
+    const generateGames = (count) => {
+      const genres = ['Roleplay', 'Obby', 'Tycoon', 'Simulator', 'PVP'];
+      return Array.from({ length: count }, (_, i) => {
+        const name = POPULAR_NAMES[i] || `Epic Adventure ${i + 1}`;
+        const entry = GAME_MAP.find(g => g.name === name);
+        const universeId = entry?.universeId ?? null;
+
+        const imageUrl = universeId
+          ? thumbnailForPlace(universeId)
+          : `https://placehold.co/300x200/111111/FFFFFF?text=${encodeURIComponent((name || 'Game').replace(/[^\w\s]/g, ''))}`;
+
+        const { deepLink, webLink } = universeId ? buildLaunch(universeId) : { deepLink: null, webLink: null };
+
+        return {
+          id: i,
+          name,
+          genre: genres[i % genres.length],
+          placeId: universeId, // keeping property name consistent with your usage
+          imageUrl,
+          deepLink,
+          webLink
+        };
+      });
+    };
+
+    // === Marketplace data: real catalog IDs ===
+    const CATALOG_ITEMS = [
+      { name: 'Dominus Aureus', catalogId: 138932314, priceLabel: 'Varies' },
+      { name: 'Valkyrie Helm', catalogId: 1365767, priceLabel: 'Varies' },
+      { name: 'Headless Head', catalogId: 134082579, priceLabel: 'Seasonal' },
+      { name: 'Korblox Deathspeaker', catalogId: 190, priceLabel: 'Varies' }, // bundle/root may differ by page
+      { name: 'Classic Fedora', catalogId: 1029025, priceLabel: 'Varies' },
+      { name: 'Ice Valkyrie', catalogId: 4390891467, priceLabel: 'Varies' },
+      { name: 'Super Super Happy Face', catalogId: 494291269, priceLabel: 'Varies' }
+    ];
+
+    const catalogUrl = (catalogId) => `https://www.roblox.com/catalog/${catalogId}`;
+
+    const generateItems = (count) => {
+      const items = [];
+      for (let i = 0; i < count; i++) {
+        const src = CATALOG_ITEMS[i % CATALOG_ITEMS.length];
+        items.push({
+          id: i,
+          name: src.name,
+          price: src.priceLabel,
+          imageUrl: thumbnailForCatalog(src.catalogId),
+          linkUrl: catalogUrl(src.catalogId),
+        });
+      }
+      return items;
+    };
+
+    // === Reusable components ===
+    const GlassCard = ({ children, className = '', ...props }) => (
+      <div
+        className={`bg-black/30 backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-white/20 ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+
+    const NavButton = ({ icon, label, active, onClick }) => (
+      <button
+        onClick={onClick}
+        className={`flex w-full items-center space-x-3 p-3.5 rounded-xl text-lg font-semibold transition-all duration-200 ${
+          active
+            ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/30'
+            : 'text-gray-300 hover:bg-white/10 hover:text-white'
+        }`}
+      >
+        {icon}
+        <span>{label}</span>
+      </button>
+    );
+
+    // === Games Section (fixed launch + thumbnails) ===
+    const GamesSection = () => {
+      const games = React.useMemo(() => generateGames(50), []);
+      const [launchFeedback, setLaunchFeedback] = React.useState({ show: false, gameName: '', launchUrl: '' });
+
+      const handleGameLaunch = (game) => {
+        if (game.deepLink) {
+          // Try deep link first
+          window.location.href = game.deepLink;
+
+          // Show feedback
+          setLaunchFeedback({
+            show: true,
+            gameName: game.name.replace(/[^a-zA-Z0-9\s]/g, ''),
+            launchUrl: game.deepLink
+          });
+
+          // If protocol handler is blocked, open web page fallback
+          setTimeout(() => {
+            try {
+              if (game.webLink) window.open(game.webLink, '_blank', 'noopener,noreferrer');
+            } catch {}
+          }, 1200);
+        } else if (game.webLink) {
+          // Fallback directly to web page if no deepLink
+          window.open(game.webLink, '_blank', 'noopener,noreferrer');
+          setLaunchFeedback({
+            show: true,
+            gameName: game.name.replace(/[^a-zA-Z0-9\s]/g, ''),
+            launchUrl: game.webLink
+          });
+        } else {
+          // No mapping yet
+          setLaunchFeedback({
+            show: true,
+            gameName: game.name.replace(/[^a-zA-Z0-9\s]/g, ''),
+            launchUrl: 'ID missing'
+          });
+        }
+
+        // Auto-hide toast
+        setTimeout(() => {
+          setLaunchFeedback({ show: false, gameName: '', launchUrl: '' });
+        }, 4000);
+      };
+
+      return (
+        <div>
+          <h2 className="text-4xl font-bold text-white mb-8">Popular Games</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {games.map((game) => (
+              <GlassCard key={game.id} className="overflow-hidden flex flex-col">
+                <img
+                  src={game.imageUrl}
+                  alt={game.name}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => { e.target.src = 'https://placehold.co/300x200/ff0000/FFFFFF?text=Image+Error'; }}
+                />
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-white truncate">{game.name}</h3>
+                  <p className="text-sm text-gray-300 mb-4">{game.genre}</p>
+                  <button
+                    onClick={() => handleGameLaunch(game)}
+                    className="block w-full mt-auto text-center bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-emerald-500/40 transform hover:scale-105"
+                    disabled={!game.placeId}
+                    title={!game.placeId ? 'ID not yet mapped' : 'Play'}
+                  >
+                    {game.placeId ? 'Play' : 'ID Pending'}
+                  </button>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+
+          {launchFeedback.show && (
+            <div
+              className="fixed bottom-6 right-6 p-4 rounded-xl bg-gray-900/95 backdrop-blur-md border border-emerald-500 shadow-2xl transition-opacity duration-300 z-50 max-w-sm"
+            >
+              <p className="font-bold text-lg text-emerald-400 mb-1">Launch Attempted!</p>
+              <p className="text-md text-white font-medium mb-2">
+                <span className="text-gray-300">Game:</span> {launchFeedback.gameName}
+              </p>
+              <p className="text-sm text-gray-400">
+                If the Roblox app didn’t open, your browser may have blocked the protocol.
+                A web page fallback opens automatically.
+              </p>
+              <small className="text-xs text-gray-500 truncate block mt-2">
+                URI: {launchFeedback.launchUrl}
+              </small>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // === Marketplace Section (fixed thumbnails + catalog links) ===
+    const MarketplaceSection = () => {
+      const items = React.useMemo(() => generateItems(20), []);
+
+      const handleBuy = (item) => {
+        window.open(item.linkUrl, '_blank', 'noopener,noreferrer');
+      };
+
+      return (
+        <div>
+          <h2 className="text-4xl font-bold text-white mb-8">Marketplace</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {items.map((item) => (
+              <GlassCard key={item.id} className="overflow-hidden p-4">
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  onError={(e) => { e.target.src = 'https://placehold.co/200x200/ff0000/FFFFFF?text=Image+Error'; }}
+                />
+                <h3 className="text-lg font-semibold text-white truncate">{item.name}</h3>
+                <p className="text-md font-bold text-emerald-400 mb-4">{item.price}</p>
+                <button
+                  onClick={() => handleBuy(item)}
+                  className="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/40"
+                  title="Open in Roblox Catalog"
+                >
+                  Buy
+                </button>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    // === Quiz Section (unchanged functionality) ===
+    const QuizSection = () => {
+      const [currentQuestion, setCurrentQuestion] = React.useState(0);
+      const [score, setScore] = React.useState(0);
+      const [showResult, setShowResult] = React.useState(false);
+      const [generatedCode, setGeneratedCode] = React.useState(null);
+      const [copySuccess, setCopySuccess] = React.useState(false);
+
+      const handleAnswerClick = (option) => {
+        if (option === quizQuestions[currentQuestion].answer) {
+          setScore((s) => s + 1);
+        }
+        const nextQuestion = currentQuestion + 1;
+        if (nextQuestion < quizQuestions.length) {
+          setCurrentQuestion(nextQuestion);
+        } else {
+          setShowResult(true);
+          const code = 'ROBO-LAUNCHER-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+          setGeneratedCode(code);
+        }
+      };
+
+      const resetQuiz = () => {
+        setCurrentQuestion(0);
+        setScore(0);
+        setShowResult(false);
+        setGeneratedCode(null);
+        setCopySuccess(false);
+      };
+
+      const copyToClipboard = () => {
+        const textArea = document.createElement("textarea");
+        textArea.value = generatedCode;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 2000);
+        } catch (err) {}
+        document.body.removeChild(textArea);
+      };
+
+      const currentQuizQuestion = quizQuestions[currentQuestion];
+
+      return (
+        <div>
+          <h2 className="text-4xl font-bold text-white mb-8">Roblox Quiz</h2>
+          <GlassCard className="max-w-3xl mx-auto p-8">
+            {showResult ? (
+              <div className="text-center">
+                <h3 className="text-3xl font-bold text-white mb-4">
+                  Quiz Completed!
+                </h3>
+                <p className="text-xl text-gray-200 mb-6">
+                  You scored {score} out of {quizQuestions.length}
+                </p>
+                {score >= 3 ? (
+                  <div>
+                    <p className="text-lg text-emerald-300 mb-4">
+                      Congratulations! You've won a mock code:
+                    </p>
+                    <div className="bg-gray-900 border-2 border-dashed border-emerald-500 p-4 rounded-lg text-center my-6 flex items-center justify-between">
+                      <span className="text-3xl font-mono font-bold text-emerald-400 tracking-wider">
+                        {generatedCode}
+                      </span>
+                      <button
+                        onClick={copyToClipboard}
+                        className="p-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white transition-all duration-200"
+                        title="Copy to Clipboard"
+                      >
+                        {copySuccess ? <Check size={20} /> : <Copy size={20} />}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-lg text-red-400 mb-4">
+                    Nice try! You need a score of 3 or more to win a code.
+                  </p>
+                )}
+                <button
+                  onClick={resetQuiz}
+                  className="mt-4 flex items-center justify-center gap-2 mx-auto bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/40"
+                >
+                  <RotateCcw size={18} />
+                  Try Again
+                </button>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-2">
+                  Question {currentQuestion + 1}/{quizQuestions.length}
+                </h3>
+                <p className="text-xl text-gray-200 mb-8">
+                  {currentQuizQuestion.question}
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {currentQuizQuestion.options.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerClick(option)}
+                      className="block w-full text-left p-4 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all duration-200 text-lg text-white font-medium"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </GlassCard>
+        </div>
+      );
+    };
+
+    // === App (shell) ===
+    const App = () => {
+      const [activeTab, setActiveTab] = React.useState('games');
+
+      const renderContent = () => {
+        switch (activeTab) {
+          case 'games': return <GamesSection />;
+          case 'marketplace': return <MarketplaceSection />;
+          case 'quiz': return <QuizSection />;
+          default: return <GamesSection />;
+        }
+      };
+
+      return (
+        <div
+          className="min-h-screen w-full font-inter bg-cover bg-center bg-fixed text-white"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80')",
+          }}
+        >
+          {/* Overlay container with blur */}
+          <div className="flex min-h-screen w-full bg-black/40">
+            {/* Sidebar */}
+            <aside className="sidebar w-64 h-screen p-6 bg-black/20 backdrop-blur-2xl border-r border-white/10 flex flex-col fixed top-0 left-0">
+              <h1 className="text-3xl font-bold text-white mb-16">
+                Roblox
+                <span
+                  className="text-emerald-400"
+                  style={{ textShadow: '0 0 10px rgba(16, 185, 129, 0.7)' }}
+                >
+                  Launcher
+                </span>
+              </h1>
+              <nav className="flex flex-col space-y-4">
+                <NavButton
+                  icon={<LayoutGrid size={24} />}
+                  label="Games"
+                  active={activeTab === 'games'}
+                  onClick={() => setActiveTab('games')}
+                />
+                <NavButton
+                  icon={<Store size={24} />}
+                  label="Marketplace"
+                  active={activeTab === 'marketplace'}
+                  onClick={() => setActiveTab('marketplace')}
+                />
+                <NavButton
+                  icon={<HelpCircle size={24} />}
+                  label="Quiz"
+                  active={activeTab === 'quiz'}
+                  onClick={() => setActiveTab('quiz')}
+                />
+              </nav>
+            </aside>
+
+            {/* Main content area */}
+            <main className="content-area ml-64 flex-1 p-10 overflow-y-auto">
+              {renderContent()}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    // === Render app ===
+    const rootElement = document.getElementById('root');
+    ReactDOM.createRoot(rootElement).render(<App />);
+  </script>
+</body>
+</html>
